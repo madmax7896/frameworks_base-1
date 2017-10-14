@@ -9073,6 +9073,18 @@ public final class Settings {
         public static final String TETHERING_ALLOW_VPN_UPSTREAMS = "tethering_allow_vpn_upstreams";
 
         /**
+         * @hide
+         */
+        public static final String QS_SHOW_AUTO_BRIGHTNESS =
+                "qs_show_auto_brightness";
+
+        /**
+         * @hide
+         */
+        public static final String QS_SHOW_BRIGHTNESS_SLIDER =
+                "qs_show_brightness_slider";
+
+        /**
          * Keys we no longer back up under the current schema, but want to continue to
          * process when restoring historical backup datasets.
          *
