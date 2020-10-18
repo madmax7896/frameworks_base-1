@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+     Copyright (C) 2020 DerpFest
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+          http://www.apache.org/licenses/LICENSE-2.0
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+
+    <!-- Whether to show a custom view for FOD -->
+    <java-symbol type="bool" name="config_needCustomFODView" />
+
+    <!-- FOD icon dimming -->
+    <java-symbol type="bool" name="config_targetUsesInKernelDimming" />
+
+    <!-- Device keyhandlers -->
+    <java-symbol type="array" name="config_deviceKeyHandlerLibs" />
+    <java-symbol type="array" name="config_deviceKeyHandlerClasses" />
+
+    <!-- Post reset runnable for all clients -->
+    <java-symbol type="bool" name="config_fingerprintPostResetRunnableForAllClients" />
+
+    <!-- Whether to cleanup fingerprints upon connection to the daemon and when user switches -->
+    <java-symbol type="bool" name="config_cleanupUnusedFingerprints" />
+
+    <!-- App error dialog -->
+    <java-symbol type="id" name="aerr_copy" />
+    <java-symbol type="string" name="url_copy_success" />
+    <java-symbol type="string" name="url_copy_failed" />
+
+    <!-- Whether to allow process with media UID to access CameraServiceProxy -->
+    <java-symbol type="bool" name="config_allowMediaUidForCameraServiceProxy" />
+
+    <!-- Whether device supports an alt. ambient display -->
+    <java-symbol type="bool" name="config_alt_ambient_display"/>
+
+    <!-- Device has OnePlus haptic motor -->
+    <java-symbol type="bool" name="config_hasOnePlusHapticMotor" />
+
+    <!-- Power Menu -->
+    <java-symbol type="string" name="reboot_to_recovery_title" />
+    <java-symbol type="string" name="reboot_to_recovery_message" />
+    <java-symbol type="string" name="reboot_to_bootloader_title" />
+    <java-symbol type="string" name="reboot_to_bootloader_message" />
+    <java-symbol type="string" name="reboot_title" />
+    <java-symbol type="string" name="reboot_message" />
+    <java-symbol type="array" name="custom_config_globalActionsList" />
+</resources>
