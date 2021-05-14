@@ -78,6 +78,7 @@ import android.util.Slog;
 import android.util.SparseBooleanArray;
 import android.view.ContextThemeWrapper;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.AccessibilityDelegate;
@@ -114,6 +115,7 @@ import com.android.systemui.statusbar.phone.ExpandableIndicator;
 import com.android.systemui.statusbar.policy.AccessibilityManagerWrapper;
 import com.android.systemui.statusbar.policy.ConfigurationController;
 import com.android.systemui.statusbar.policy.DeviceProvisionedController;
+import com.android.systemui.tuner.TunerService;
 
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -177,8 +179,10 @@ public class VolumeDialogImpl implements VolumeDialog,
     private boolean mShowA11yStream;
 
     private int mActiveStream;
+    private int mAllyStream;
     private int mPrevActiveStream;
     private boolean mAutomute = VolumePrefs.DEFAULT_ENABLE_AUTOMUTE;
+    private boolean mMusicHidden;
     private boolean mSilentMode = VolumePrefs.DEFAULT_ENABLE_SILENT_MODE;
     private State mState;
     private SafetyWarningDialog mSafetyWarning;
@@ -189,6 +193,7 @@ public class VolumeDialogImpl implements VolumeDialog,
     private boolean mHasSeenODICaptionsTooltip;
     private ViewStub mODICaptionsTooltipViewStub;
     private View mODICaptionsTooltipView = null;
+    private TunerService mTunerService;
 
     private boolean mShowAppVolume;
 
@@ -259,6 +264,8 @@ public class VolumeDialogImpl implements VolumeDialog,
         mHovering = false;
         mShowing = false;
         mExpanded = false;
+        mAllyStream = -1;
+        mMusicHidden = false;
         mWindow = mDialog.getWindow();
         mWindow.requestFeature(Window.FEATURE_NO_TITLE);
         mWindow.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
@@ -374,8 +381,6 @@ public class VolumeDialogImpl implements VolumeDialog,
             mainView.setLayoutParams(mainLayoutParams);
         }
 
-        mSettingsIcon.setOnLongClickListener(this);
-
         if (mHideRingerButton) {
             mRinger.setVisibility(View.GONE);
         }
@@ -438,7 +443,6 @@ public class VolumeDialogImpl implements VolumeDialog,
     }
 
     private final TunerService.Tunable mTunable = new TunerService.Tunable() {
-        @Override
         public void onTuningChanged(String key, String newValue) {
             if (key.equals(SHOW_APP_VOLUME)) {
                 final boolean showAppVolume = TunerService.parseIntegerSwitch(newValue, false);
@@ -729,6 +733,10 @@ public class VolumeDialogImpl implements VolumeDialog,
                 Dependency.get(ActivityStarter.class).startActivity(intent,
                         true /* dismissShade */);
             });
+        }
+
+        if (mAllyStream == -1) {
+            mAllyStream = mActiveStream;
         }
 
         if (mExpandRowsView != null) {
@@ -1042,6 +1050,8 @@ public class VolumeDialogImpl implements VolumeDialog,
                             .getDimensionPixelSize(R.dimen.volume_dialog_panel_width);
                     updateExpandedRows(mExpanded);
                     mExpandRows.setExpanded(mExpanded);
+                    mAllyStream = -1;
+                    mMusicHidden = false;
                     mController.notifyVisible(false);
                 }, 50));
         animator.translationX(getAnimatorX());
@@ -1062,6 +1072,12 @@ public class VolumeDialogImpl implements VolumeDialog,
 
     private boolean shouldBeVisibleH(VolumeRow row, VolumeRow activeRow) {
         boolean isActive = row.stream == activeRow.stream;
+
+        if (row.stream == AudioSystem.STREAM_MUSIC &&
+                activeRow.stream != AudioSystem.STREAM_MUSIC && !mExpanded) {
+            mMusicHidden = true;
+            return false;
+        }
 
         if (isActive) {
             return true;
@@ -1697,7 +1713,7 @@ public class VolumeDialogImpl implements VolumeDialog,
     }
 
     public boolean onLongClick(View v) {
-        if (v == mSettingsIcon) {
+        if (v == mMediaOutputIcon) {
             startSoundActivity();
             mController.vibrate(VibrationEffect.get(VibrationEffect.EFFECT_HEAVY_CLICK));
         }
